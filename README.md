@@ -1,6 +1,6 @@
 # PhD Thesis: Análisis de sistemas clásicos y cuánticos dependientes del tiempo
 ## Author: Alejandro R. Urzúa
-### August, 2020
+### October, 2020
 
 This notebooks contains the calculations who where developed through the PhD research subject
 
