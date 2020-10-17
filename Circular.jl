@@ -15,7 +15,7 @@ end
 md"# Amplitude evolution on a circular array of harmonic elements coupled by nearest neighbour interaction"
 
 # ╔═╡ 708fa56e-0e55-11eb-07b6-690d171d4d3b
-md"![image](attachment:circ.png)
+md"![image](https://raw.githubusercontent.com/rurz/PhD_Calcs/Pluto.jl_Port/img/circ.png)
 For an array of elements with the cyclic boundary condition $q_{N+1}=q_{0}$, the evolution of the initial amplitude $\sum_{l} q_{l}(0)\ket{l}$ is given by the equation
 
 $$\begin{equation}\boxed{q_{n}(t)=\frac{1}{N+1}\sum\limits_{m,l=0}^{N}\cos\left(2t
