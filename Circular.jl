@@ -1,12 +1,11 @@
 ### A Pluto.jl notebook ###
-# v0.12.3
+# v0.12.4
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 63202204-0e51-11eb-1a8f-f9dc0e3cad29
 begin
-	using PyCall # Call PyCall wrapper
 	using PyPlot # Call Matplotlib for plotting purposes
 	using LaTeXStrings # Call LaTeX formatting library
 	using LinearAlgebra # Call algebra library for vector manipulation
@@ -16,24 +15,35 @@ end
 md"# Amplitude evolution on a circular array of harmonic elements coupled by nearest neighbour interaction"
 
 # ╔═╡ 708fa56e-0e55-11eb-07b6-690d171d4d3b
-md"The evolution of the initial amplitude $\sum_{l} q_{l}(0)\ket{l}$ is given by the equation
+md"![image](http://www.mediafire.com/convkey/3507/34q1nj8nnnunwzyzg.jpg?size_id=3)
+For an array of elements with the cyclic boundary condition $q_{N+1}=q_{0}$, the evolution of the initial amplitude $\sum_{l} q_{l}(0)\ket{l}$ is given by the equation
 
 $$\begin{equation}\boxed{q_{n}(t)=\frac{1}{N+1}\sum\limits_{m,l=0}^{N}\cos\left(2t
         \sqrt{k}\sin\left(\frac{\pi m}{N+1}\right)\right)\cos\left(\frac{2\pi m}{N+1}(n-l)\right)q_{l}(0)}
 \end{equation}$$
 
 where $N$ is the dimension of the array, and $k$ is the strength of the coupling, in this case $k_{l}\equiv k,\forall l$.
+We can take $\sum_{l}q_{l}(0)\ket{l}$ as a a distribution of number states $\ket{n}$, coherent states $\ket{\alpha}$, or a superposition, we just need tha initial amplitude distribution to fullfill the Hilbert space completeness and to be normalized.
+
+Alejandro R. Urzúa\
+October, 2020
 "
 
 # ╔═╡ a65d2a08-0e51-11eb-0085-49db35b81bcb
-rc("text", usetex=true) # TeX formatting for the labels and titles
+begin 
+	rc("text", usetex=true) # TeX formatting for the labels and titles
+	ion() # Interactive plotting display
+end
 
 # ╔═╡ ad1523a0-0e51-11eb-18cf-ddb9466c94af
 begin
 	N = 32 # Coupling's dimension
-	dim = N+1 # Coupled element's dimension
+	dim = N+1 # Coupled elements dimension
 	k = 1 # Strenght of the coupling
 end;
+
+# ╔═╡ 9292a5d8-0e52-11eb-3281-bfa3f42a0fc1
+t_list = range(0,stop=61,length=61); # Set the vector list of the time sampling
 
 # ╔═╡ c0ad476c-0e51-11eb-2f41-b5a6a61b49be
 function F1(t,m,n,l) # Define the analytic function of the evolution, thesis equation (1.13) 
@@ -41,7 +51,7 @@ function F1(t,m,n,l) # Define the analytic function of the evolution, thesis equ
 end;
 
 # ╔═╡ cbaa2d5e-0e51-11eb-3fde-71c180be815c
-function pint(a) # Initial condition as a vector with an amplitude at position 0<=a<=N+1
+function pint(a) # Initial condition as a ket (vector) with an amplitude at position 0<=a<=N+1
     pv = zeros(Float64,dim)
     for j in 0:N
         if a == j
@@ -53,83 +63,40 @@ function pint(a) # Initial condition as a vector with an amplitude at position 0
     return pv
 end;
 
-# ╔═╡ 39e9cff6-0e52-11eb-3bd8-499b3cc3274e
+# ╔═╡ 3f9ec030-10a7-11eb-083c-cb9534062b5f
+# Set of initial conditions
 begin
-	icond1 = normalize(pint(0)) # Initial condition one
-
-	function q1(t,n)
-    	mevol = zeros(Float64,(dim,dim))
-    	for m in 0:N
-        	for l in 0:N
-            	mevol[m+1,l+1] = F1(t,m,n,l)*icond1[l+1]
-        	end
-    	end
-    	return (1/(N+1))*sum(mevol)
-	end
-end;
-
-# ╔═╡ 666e31fc-0e52-11eb-2cdc-afde9f0b8a63
-begin
-	icond2 = normalize(pint(8)+pint(24)) # Initial condition two
-
-	function q2(t,n)
-    	mevol = zeros(Float64,(dim,dim))
-    	for m in 0:N
-        	for l in 0:N
-            	mevol[m+1,l+1] = F1(t,m,n,l)*icond2[l+1]
-        	end
-    	end
-    	return (1/(N+1))*sum(mevol)
-	end
-end;
-
-# ╔═╡ 7fcb5e98-0e52-11eb-108c-156668a650c7
-begin
-	icond3 = normalize(pint(16)) # Initial condition three
-
-	function q3(t,n)
-    	mevol = zeros(Float64,(dim,dim))
-    	for m in 0:N
-        	for l in 0:N
-            	mevol[m+1,l+1] = F1(t,m,n,l)*icond3[l+1]
-        	end
-    	end
-    	return (1/(N+1))*sum(mevol)
-	end
-end;
-
-# ╔═╡ 9292a5d8-0e52-11eb-3281-bfa3f42a0fc1
-t_list = range(0,stop=61,length=61); # Set the vector list of the time sampling
-
-# ╔═╡ 9bc82306-0e52-11eb-286b-ddeff0f34b8b
-begin
-	evolt1 = zeros(Float64,(dim,length(t_list))) # Time evolution of the initial condition one
-	for t in 1:length(t_list)
-    	for n in 0:N    
-       		evolt1[n+1,t] = q1(t_list[t],n)
-    	end
-	end
+	icond1 = normalize(pint(0)) # Initial condition |0>
+	icond2 = normalize(pint(8)+pint(24)) # Initial condition A(|8> + |24>)
+	icond3 = normalize(pint(16)) # Initial condition three |16>
 end
 
-# ╔═╡ d1ad92c8-0e52-11eb-26ca-0df20f1729c6
-begin
-	evolt2 = zeros(Float64,(dim,length(t_list))) # Time evolution of the initial condition two
+# ╔═╡ 020a0c56-109e-11eb-3cf2-7fab0f2bfe8b
+function evol(icond) # Evolution function as a nested functions
+	evolt = zeros(Float64,(dim,length(t_list)))
 	for t in 1:length(t_list)
-    	for n in 0:N    
-       		evolt2[n+1,t] = q2(t_list[t],n)
-    	end
+		for n in 0:N
+			function mevolt(t,n)
+				mevol = zeros(Float64,(dim,dim))
+				for m in 0:N
+					for l in 0:N
+						mevol[m+1,l+1] = F1(t,m,n,l)*icond[l+1]
+					end
+				end
+				return (1/(N+1))*sum(mevol)
+			end
+			evolt[n+1,t] = mevolt(t_list[t],n)
+		end
 	end
+	return evolt
 end
 
-# ╔═╡ e051dfd2-0e52-11eb-2b8a-67a9754c30fd
+# ╔═╡ 7d3c6622-10a7-11eb-0274-a9783669ab70
 begin
-	evolt3 = zeros(Float64,(N+1,length(t_list))) # Time evolution of the initial condition three
-	for t in 1:length(t_list)
-    	for n in 0:N    
-       		evolt3[n+1,t] = q3(t_list[t],n)
-    	end
-	end
-end
+	evolt1 = evol(icond1)
+	evolt2 = evol(icond2)
+	evolt3 = evol(icond3)
+end;
 
 # ╔═╡ f9bb3afe-0e52-11eb-21de-5d468a99b5c1
 begin
@@ -185,27 +152,20 @@ cb.ax.tick_params(labelsize=10,length=5,width=1,direction="inout")
 
 tight_layout(rect=(0, 0, 0.9, 1))
 
-savefig("circ_vd.pdf", transparent = "true", dpi=300, bbox_inches="tight", pad_inches=0)
+#savefig("circ_vd.pdf", transparent = "true", dpi=300, bbox_inches="tight", pad_inches=0)
 end
-
-# ╔═╡ 76160e14-0e53-11eb-346b-eb6cddfa034e
-print("Julia:"," ", VERSION, "\nPyCall:"," ", PyCall.pyversion, "\nPyPlot:"," ", PyPlot.version, "\nOS Kernel:"," ", Sys.KERNEL, "\nArchitecture:"," ", Sys.ARCH)
 
 # ╔═╡ Cell order:
 # ╟─6492430e-0e50-11eb-3419-ff3b319119b7
-# ╟─708fa56e-0e55-11eb-07b6-690d171d4d3b
+# ╠═708fa56e-0e55-11eb-07b6-690d171d4d3b
 # ╠═63202204-0e51-11eb-1a8f-f9dc0e3cad29
 # ╠═a65d2a08-0e51-11eb-0085-49db35b81bcb
 # ╠═ad1523a0-0e51-11eb-18cf-ddb9466c94af
+# ╠═9292a5d8-0e52-11eb-3281-bfa3f42a0fc1
 # ╠═c0ad476c-0e51-11eb-2f41-b5a6a61b49be
 # ╠═cbaa2d5e-0e51-11eb-3fde-71c180be815c
-# ╠═39e9cff6-0e52-11eb-3bd8-499b3cc3274e
-# ╠═666e31fc-0e52-11eb-2cdc-afde9f0b8a63
-# ╠═7fcb5e98-0e52-11eb-108c-156668a650c7
-# ╠═9292a5d8-0e52-11eb-3281-bfa3f42a0fc1
-# ╠═9bc82306-0e52-11eb-286b-ddeff0f34b8b
-# ╠═d1ad92c8-0e52-11eb-26ca-0df20f1729c6
-# ╠═e051dfd2-0e52-11eb-2b8a-67a9754c30fd
+# ╠═3f9ec030-10a7-11eb-083c-cb9534062b5f
+# ╠═020a0c56-109e-11eb-3cf2-7fab0f2bfe8b
+# ╠═7d3c6622-10a7-11eb-0274-a9783669ab70
 # ╠═f9bb3afe-0e52-11eb-21de-5d468a99b5c1
 # ╠═103c4e8a-0e53-11eb-1b3e-11ef86f9e9b4
-# ╠═76160e14-0e53-11eb-346b-eb6cddfa034e
