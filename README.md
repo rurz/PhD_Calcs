@@ -2,6 +2,8 @@
 ## Author: Alejandro R. Urzúa
 ### October, 2020
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rurz/PhD_Calcs/HEAD)
+
 This notebooks contains the calculations who were developed through the PhD research subject
 
 1. Circular, Lineal, Kravchuk, and Binom_Final, belongs to the evolution of arrays of massess
