@@ -6,7 +6,7 @@
 
 ________________
 
-___On November 27, I successfully defended my PhD thesis. Now, I Am sharing the dissertation document at the folder `docs`. There you will encounter the PDF in Spanish, but in the reference list you will find the journal articles in which the thesis is based.___
+___On November 27, I successfully defended my PhD thesis. Now, I Am sharing the dissertation document at the folder `docs`. There you will find the PDF in Spanish language, but in the reference list you will get the journal articles in which the thesis is based.___
 
 Note: Notebooks are unchanged since the last visible commit
 
